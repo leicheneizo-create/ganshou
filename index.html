@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深海准星：数学攻势 - 学习一次函数与方程组</title>
+    <meta name="description" content="一款通过潜艇射击游戏学习一次函数（斜率、截距）和二元一次方程组的教育类游戏。">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="game-container">
+        <header>
+            <h1>DEEP SEA <span class="highlight">RETICLE</span></h1>
+            <div class="stats">
+                <div class="stat-item">レベル: <span id="level-num">1</span></div>
+                <div class="stat-item">スコア: <span id="score">0</span></div>
+            </div>
+        </header>
+
+        <main>
+            <div id="radar-display">
+                <canvas id="game-canvas"></canvas>
+                <div id="overlay-ui"></div>
+            </div>
+
+            <aside id="controls">
+                <div class="panel">
+                    <h2>火器管制システム</h2>
+                    <p id="mission-brief">パラメータを調整して、赤い敵艦を撃破せよ</p>
+                    
+                    <div class="equation-input">
+                        <span class="label">方程式: y = </span>
+                        <input type="number" id="input-k" step="0.1" placeholder="k">
+                        <span class="label"> x + </span>
+                        <input type="number" id="input-b" step="1" placeholder="b">
+                    </div>
+
+                    <div class="hints" id="hint-box">
+                        <p>ヒント：<strong>k</strong> は傾き（角度）、<strong>b</strong> は切片（初期深度）を表します</p>
+                    </div>
+
+                    <button id="fire-btn">魚雷発射</button>
+                </div>
+
+                <div class="panel system-solver" id="solver-panel" style="display: none;">
+                    <h2>レーダー追跡 (連立方程式)</h2>
+                    <div class="system-equations">
+                        <div>敵艦: <span id="eq-enemy">y = -0.5x + 10</span></div>
+                        <div>魚雷: <span id="eq-torpedo">y = kx + b</span></div>
+                    </div>
+                    <p class="small-text">交点 (x, y) が予測衝突座標となります</p>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Deep Sea Reticle EdTech | 数学と論理の戦場</p>
+        </footer>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
