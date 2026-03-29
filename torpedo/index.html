@@ -1,20 +1,19 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>深海准星：数学攻势 - 学习一次函数与方程组</title>
-    <meta name="description" content="一款通过潜艇射击游戏学习一次函数（斜率、截距）和二元一次方程组的教育类游戏。">
+    <title>深海准星：数学攻撃 2.0</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="game-container">
         <header>
-            <h1>DEEP SEA <span class="highlight">RETICLE</span></h1>
+            <h1><span class="highlight">DEEP SEA</span> RETICLE</h1>
             <div class="stats">
-                <div class="stat-item">レベル: <span id="level-num">1</span></div>
-                <div class="stat-item">スコア: <span id="score">0</span></div>
+                <span>MISSION: <span id="level-num">1</span></span>
+                <span>SCORE: <span id="score">0</span></span>
             </div>
         </header>
 
@@ -22,42 +21,90 @@
             <div id="radar-display">
                 <canvas id="game-canvas"></canvas>
                 <div id="overlay-ui"></div>
+                <!-- Start Overlay -->
+                <div id="start-overlay" class="start-mask">
+                    <button id="start-btn" class="init-btn">📡 RADAR SYSTEM START</button>
+                    <p>クリックしてソナーを起動してください</p>
+                </div>
+
+                <!-- Victory Modal -->
+                <div id="victory-modal" class="modal-overlay" style="display:none;">
+                    <div class="modal-content">
+                        <div class="medal-icon">🎖️</div>
+                        <h3>特等火器管制官 授与</h3>
+                        <p>全てのミッションを完遂しました！<br>あなたは一次関数の達人です。</p>
+                        
+                        <!-- NEW Tech Insight -->
+                        <div id="tech-insight" class="tech-card">
+                            <h4>💻 斜率と速度の動的関係</h4>
+                            <p>現実の魚雷やロケットでは、<b>傾き(k)</b>が<b>速度の配分</b>を決定します：</p>
+                            <code class="code-block" style="font-size: 0.85em;">
+                                // 斜率 k から速度成分を計算<br>
+                                vx = V_total / sqrt(1 + k²);<br>
+                                vy = k * vx; // 垂直方向の速さ
+                            </code>
+                            <small>「急な角度で進むほど、前へ進む速さは遅くなる」という物理法則が数学で表現されています。</small>
+                        </div>
+
+                        <div id="final-test">
+                            <p class="final-q"><b>最終試験:</b> y = -2x + 50 の傾き(k)は？</p>
+                            <div class="options">
+                                <button onclick="checkFinalAnswer(true)">-2</button>
+                                <button onclick="checkFinalAnswer(false)">50</button>
+                                <button onclick="checkFinalAnswer(false)">2</button>
+                            </div>
+                        </div>
+                        <button id="restart-btn" class="base-btn">基地へ戻る</button>
+                    </div>
+                </div>
             </div>
 
             <aside id="controls">
-                <div class="panel">
-                    <h2>火器管制システム</h2>
-                    <p id="mission-brief">パラメータを調整して、赤い敵艦を撃破せよ</p>
-                    
+                <div class="panel mission-card">
+                    <h2>MISSION BRIEF</h2>
+                    <p id="mission-brief" class="hints">読み込み中...</p>
+                </div>
+
+                <div class="panel math-logic-card">
+                    <h2>TACTICAL MATH</h2>
+                    <div id="solver-panel" style="display:none;">
+                        <p id="eq-enemy" class="realtime-data" style="color:#d46b08;"></p>
+                        <div class="realtime-display">
+                            <div class="realtime-data">予測Vx: <span id="stat-vx">--</span></div>
+                            <div class="realtime-data">予測Vy: <span id="stat-vy">--</span></div>
+                            <div class="realtime-data">到達時間: <span id="stat-time">--</span> s</div>
+                            <div id="solve-status" class="status-indicator">READY</div>
+                        </div>
+                    </div>
+                    <p id="hint-box" class="hints">ヒントを表示するには計算を開始してください。</p>
+                </div>
+
+                <div class="panel fire-control-card">
+                    <h2>FIRE CONTROL</h2>
                     <div class="equation-input">
-                        <span class="label">方程式: y = </span>
-                        <input type="number" id="input-k" step="0.1" placeholder="k">
-                        <span class="label"> x + </span>
+                        y = <input type="number" id="input-k" step="1" placeholder="k"> x + 
                         <input type="number" id="input-b" step="1" placeholder="b">
                     </div>
-
-                    <div class="hints" id="hint-box">
-                        <p>ヒント：<strong>k</strong> は傾き（角度）、<strong>b</strong> は切片（初期深度）を表します</p>
-                    </div>
-
-                    <button id="fire-btn">魚雷発射</button>
+                    <button id="fire-btn">魚雷発射 (FIRE)</button>
                 </div>
-
-                <div class="panel system-solver" id="solver-panel" style="display: none;">
-                    <h2>レーダー追跡 (連立方程式)</h2>
-                    <div class="system-equations">
-                        <div>敵艦: <span id="eq-enemy">y = -0.5x + 10</span></div>
-                        <div>魚雷: <span id="eq-torpedo">y = kx + b</span></div>
-                    </div>
-                    <p class="small-text">交点 (x, y) が予測衝突座標となります</p>
-                </div>
-            </div>
+            </aside>
         </main>
 
         <footer>
-            <p>&copy; 2024 Deep Sea Reticle EdTech | 数学と論理の戦場</p>
+            <p>&copy; 2026 DEEP SEA RETICLE - MATHEMATICAL OFFENSIVE</p>
         </footer>
     </div>
-    <script src="game.js"></script>
+    <!-- Calculations and Physics Engine -->
+    <script src="js/calculator.js"></script>
+
+    <!-- Levels Definitions -->
+    <script src="js/levels/training_mission.js"></script>
+    <script src="js/levels/speed_upgrade.js"></script>
+    <script src="js/levels/linear_intersection.js"></script>
+    <script src="js/levels/diagonal_pursuit.js"></script>
+    <script src="js/levels/slope_velocity.js"></script>
+
+    <!-- Main Game Engine -->
+    <script src="js/main.js"></script>
 </body>
 </html>
