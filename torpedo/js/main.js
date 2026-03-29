@@ -27,6 +27,8 @@ const victoryModal = document.getElementById('victory-modal');
 const startOverlay = document.getElementById('start-overlay');
 const startBtn = document.getElementById('start-btn');
 const restartBtn = document.getElementById('restart-btn');
+const openLabBtn = document.getElementById('open-lab-btn');
+const closeLabBtn = document.getElementById('close-lab-btn');
 
 // --- Initialization ---
 function init() {
@@ -42,6 +44,7 @@ function attachEvents() {
     inputK.addEventListener('input', () => { playSound('click'); updatePrediction(); });
     inputB.addEventListener('input', () => { playSound('click'); updatePrediction(); });
     restartBtn.addEventListener('click', resetGame);
+    openLabBtn.addEventListener('click', () => { if(window.TacticalLab) TacticalLab.show(); });
     window.addEventListener('resize', resize);
     window.checkFinalAnswer = (correct) => { if(correct) { alert("正解!"); resetGame(); } else alert("再度挑戦!"); };
 }
@@ -94,6 +97,14 @@ function setupLevel() {
     torpedo = { ...config.torpedo, y: 0 };
     
     solverPanel.style.display = config.id > 1 ? 'block' : 'none';
+    
+    // Show Lab button only on Mission 05
+    if (config.id === 5) {
+        openLabBtn.style.display = 'block';
+    } else {
+        openLabBtn.style.display = 'none';
+    }
+
     updatePrediction();
 }
 

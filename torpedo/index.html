@@ -61,8 +61,8 @@
 
             <aside id="controls">
                 <div class="panel mission-card">
-                    <h2>MISSION BRIEF</h2>
                     <p id="mission-brief" class="hints">読み込み中...</p>
+                    <button id="open-lab-btn" class="lab-trigger" style="display:none;">🔬 TECH LAB: 斜率の秘密</button>
                 </div>
 
                 <div class="panel math-logic-card">
@@ -94,8 +94,65 @@
             <p>&copy; 2026 DEEP SEA RETICLE - MATHEMATICAL OFFENSIVE</p>
         </footer>
     </div>
+
+    <!-- Tactical Lab Modal -->
+    <div id="lab-modal" class="modal-overlay" style="display:none;">
+        <div class="lab-content">
+            <header class="lab-header">
+                <h2>🔬 戦術研究所: 進路の傾きと前進速度の関係</h2>
+                <button id="close-lab-btn" class="close-btn">&times;</button>
+            </header>
+            
+            <div class="lab-body">
+                <div class="lab-visuals">
+                    <div class="simulation-container">
+                        <canvas id="lab-canvas"></canvas>
+                        <div class="speed-gauge-overlay">
+                            <div class="gauge-bar">
+                                <label>前進速度 (Vx)</label>
+                                <div class="bar-outer"><div id="lab-vx-bar" class="bar-inner"></div></div>
+                                <span id="lab-vx-val">--</span>
+                            </div>
+                            <div class="gauge-bar">
+                                <label>上昇強度 (Vy)</label>
+                                <div class="bar-outer"><div id="lab-vy-bar" class="bar-inner red"></div></div>
+                                <span id="lab-vy-val">--</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lab-explanation">
+                        <h4>💡 斜め進むことのトレードオフ</h4>
+                        <p>「魚雷の総エネルギー(Vt)は一定です。<b>道が急(kが大きい)</b>になるほど、横に進む力(Vx)が弱まってしまいます。」</p>
+                        <ul class="simple-concepts">
+                            <li>📈 <b>傾き 0:</b> 全ての力が前進に使われます。</li>
+                            <li>📈 <b>傾き 1:</b> 前に進む力と上に登る力が分散されます。</li>
+                            <li>📈 <b>傾き 2:</b> 前に進む力よりも上に登る力が強くなります。</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <aside class="lab-controls">
+                    <div class="control-group">
+                        <label for="lab-slider-k">斜率 (k) の調整</label>
+                        <input type="range" id="lab-slider-k" min="0" max="5" step="0.1" value="1">
+                        <div class="slider-val">k = <span id="lab-k-val">1.0</span></div>
+                    </div>
+                    <div class="action-grid">
+                        <button id="lab-demo-btn" class="lab-btn secondary">🎬 比較アニメーションを再生</button>
+                        <button id="lab-reset-btn" class="lab-btn">🔄 リセット</button>
+                    </div>
+                    <div class="mission-hint-card">
+                        <b>Mission 05 攻略のカギ:</b><br>
+                        敵の速度と自分の水平速度(Vx)の差を考えよう。
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+
     <!-- Calculations and Physics Engine -->
     <script src="js/calculator.js"></script>
+    <script src="js/lab.js"></script>
 
     <!-- Levels Definitions -->
     <script src="js/levels/training_mission.js"></script>
